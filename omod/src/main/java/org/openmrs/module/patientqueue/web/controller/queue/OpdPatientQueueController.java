@@ -329,9 +329,8 @@ public class OpdPatientQueueController {
 			+ patientId + "&opdId=" + opdId;
 			} 
 			else if(!patientPaid){
-			String visitstatus = "Not Paid Reg Fee";
 			return "redirect:/module/patientdashboard/main.htm?patientId="
-					+ patientId + "&opdId=" + opdId + "&visitStatus=" + visitstatus;
+					+ patientId + "&opdId=" + opdId + "&visitStatus=" + OPDPatientQueueConstants.REG_FEE_NOT_PAID_VISIT_STATUS;
 			}
 			else {
 			opdPatientQueue = queueService.saveOpdPatientQueue(queue);
