@@ -305,11 +305,34 @@ public class OpdPatientQueueController {
 		queue.setVisitStatus("REVISIT");
 		
 		Boolean pd = patient.getDead();
+		
+		//franqq, 24-nov-2015, Issue #8 Patient must pay registration fees before clinician administers treatment
+		Boolean patientPaid = false;
+		Calendar yesterday = Calendar.getInstance();
+		yesterday.add(Calendar.DATE, -1);
+		Calendar today = Calendar.getInstance();
+
+		Concept regFeeConcept = Context.getConceptService().getConcept(3950);
+		ObsService obsService = Context.getObsService();
+		List<Obs> lastObs = obsService.getObservations(Arrays.asList((Person) patient), null,
+				Arrays.asList(regFeeConcept), null, null, null, null, 1, null, yesterday.getTime(), today.getTime(), false);
+		if(lastObs.size() > 0) {
+			patientPaid = true;
+		} else {
+			patientPaid = false;
+		}
+
+		
 		OpdPatientQueue opdPatientQueue = null;
 		if (pd == true) {
 			return "redirect:/module/patientdashboard/main.htm?patientId="
 			+ patientId + "&opdId=" + opdId;
-			} else {
+			} 
+			else if(!patientPaid){
+			return "redirect:/module/patientdashboard/main.htm?patientId="
+					+ patientId + "&opdId=" + opdId + "&visitStatus=" + OPDPatientQueueConstants.REG_FEE_NOT_PAID_VISIT_STATUS;
+			}
+			else {
 			opdPatientQueue = queueService.saveOpdPatientQueue(queue);
 			return "redirect:/module/patientdashboard/main.htm?patientId="
 			+ queue.getPatient().getPatientId() + "&opdId="
