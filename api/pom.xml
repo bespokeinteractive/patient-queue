@@ -4,9 +4,9 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>patientqueue</artifactId>
-		<version>0.9.7</version>
+		<version>0.9.8-SNAPSHOT</version>
 	</parent>
-	<groupId>org.openmrs.module</groupId>
+
 	<artifactId>patientqueue-api</artifactId>
 	<packaging>jar</packaging>
 	<name>patientqueue api</name>

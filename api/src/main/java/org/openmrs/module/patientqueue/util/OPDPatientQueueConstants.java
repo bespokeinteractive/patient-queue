@@ -34,3 +34,5 @@ public class OPDPatientQueueConstants {
 
 	public static final String STATUS = "PROCESSING";
 	public static final String REG_FEE_NOT_PAID_VISIT_STATUS = "Not Paid Reg Fee";
+
+}

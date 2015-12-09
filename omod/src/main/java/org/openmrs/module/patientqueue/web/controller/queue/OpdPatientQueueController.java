@@ -20,21 +20,16 @@
 
 package org.openmrs.module.patientqueue.web.controller.queue;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Concept;
-import org.openmrs.ConceptAnswer;
-import org.openmrs.Patient;
-import org.openmrs.PersonAttribute;
-import org.openmrs.PersonAttributeType;
+import org.openmrs.*;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.HospitalCoreService;
 import org.openmrs.module.hospitalcore.IpdService;
@@ -209,9 +204,9 @@ public class OpdPatientQueueController {
 	@RequestMapping(value = "/module/patientqueue/selectPatientInSystem.htm", method = RequestMethod.GET)
 	public String selectPatientInSystem(@RequestParam("id") Integer patientId,
 			@RequestParam("opdId") Integer opdId) {
-		HospitalCoreService hcs = (HospitalCoreService) Context
+		HospitalCoreService hcs = Context
 		.getService(HospitalCoreService.class);
-		IpdService ipdService = (IpdService) Context
+		IpdService ipdService = Context
 		.getService(IpdService.class);
 		PatientQueueService queueService = Context
 				.getService(PatientQueueService.class);
@@ -303,9 +298,9 @@ public class OpdPatientQueueController {
 				+ OPDPatientQueueConstants.STATUS);
 		queue.setCategory(selectedCategory);
 		queue.setVisitStatus("REVISIT");
-		
+
 		Boolean pd = patient.getDead();
-		
+
 		//franqq, 24-nov-2015, Issue #8 Patient must pay registration fees before clinician administers treatment
 		Boolean patientPaid = false;
 		Calendar yesterday = Calendar.getInstance();
@@ -316,18 +311,14 @@ public class OpdPatientQueueController {
 		ObsService obsService = Context.getObsService();
 		List<Obs> lastObs = obsService.getObservations(Arrays.asList((Person) patient), null,
 				Arrays.asList(regFeeConcept), null, null, null, null, 1, null, yesterday.getTime(), today.getTime(), false);
-		if(lastObs.size() > 0) {
-			patientPaid = true;
-		} else {
-			patientPaid = false;
-		}
+		patientPaid = lastObs.size() > 0;
 
-		
+
 		OpdPatientQueue opdPatientQueue = null;
 		if (pd == true) {
 			return "redirect:/module/patientdashboard/main.htm?patientId="
 			+ patientId + "&opdId=" + opdId;
-			} 
+			}
 			else if(!patientPaid){
 			return "redirect:/module/patientdashboard/main.htm?patientId="
 					+ patientId + "&opdId=" + opdId + "&visitStatus=" + OPDPatientQueueConstants.REG_FEE_NOT_PAID_VISIT_STATUS;
